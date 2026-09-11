@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FaceDetect – AI Face Detection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#home" class="brand" data-nav>
+      <span class="brand-mark" aria-hidden="true">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+      </span>
+      FaceDetect
+    </a>
+    <nav class="nav-links">
+      <a href="#home" class="nav-link is-active" data-nav data-target="home">Home</a>
+      <a href="#detect" class="nav-link" data-nav data-target="detect">Face Detection</a>
+      <a href="#about" class="nav-link" data-nav data-target="about">About</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ HOME ============ -->
+  <section id="home" class="view is-active">
+    <div class="hero">
+      <div class="hero-copy">
+        <h1>See every face,<br>the instant it appears.</h1>
+        <p class="hero-sub">Detect faces instantly using your camera or an uploaded image — processed entirely in your browser.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" id="homeStartCamera">Start Camera</button>
+          <button class="btn btn-ghost" id="homeUploadImage">Upload Image</button>
+        </div>
+        <p class="hero-note">No images ever leave your device. Detection runs locally.</p>
+      </div>
+      <div class="hero-frame" aria-hidden="true">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <svg class="hero-face" viewBox="0 0 200 200" fill="none">
+          <circle cx="100" cy="88" r="52" stroke="currentColor" stroke-width="2.5"/>
+          <path d="M60 150c8-24 26-36 40-36s32 12 40 36" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="80" cy="82" r="4" fill="currentColor"/>
+          <circle cx="120" cy="82" r="4" fill="currentColor"/>
+        </svg>
+        <span class="scan-line" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature-card">
+        <h3>Live camera detection</h3>
+        <p>Turn on your webcam and watch faces get boxed in real time, frame by frame.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Image upload</h3>
+        <p>Drop in a JPG or PNG and get an instant count of every face found.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Runs in your browser</h3>
+        <p>No servers, no uploads — the AI model loads once and runs on your device.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FACE DETECTION ============ -->
+  <section id="detect" class="view">
+    <div class="detect-head">
+      <h2>Face Detection</h2>
+      <p>Choose a source, then run detection.</p>
+    </div>
+
+    <div class="mode-switch" role="tablist">
+      <button class="mode-btn is-active" id="modeCameraBtn" role="tab" aria-selected="true">Camera</button>
+      <button class="mode-btn" id="modeUploadBtn" role="tab" aria-selected="false">Upload Image</button>
+    </div>
+
+    <div class="detect-layout">
+
+      <div class="stage-wrap">
+        <div class="stage" id="stage">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+
+          <video id="video" autoplay muted playsinline></video>
+          <img id="uploadedImage" alt="Uploaded photo" hidden>
+          <canvas id="overlay"></canvas>
+
+          <div class="stage-empty" id="stageEmpty">
+            <p>Camera preview will appear here.</p>
+          </div>
+        </div>
+
+        <!-- Camera controls -->
+        <div class="stage-controls" id="cameraControls">
+          <button class="btn btn-primary" id="startCameraBtn">Start Camera</button>
+          <button class="btn btn-outline" id="startDetectionBtn" disabled>Start Detection</button>
+          <button class="btn btn-text" id="stopCameraBtn" hidden>Stop Camera</button>
+        </div>
+
+        <!-- Upload controls -->
+        <div class="stage-controls" id="uploadControls" hidden>
+          <label class="btn btn-primary file-btn" for="fileInput">Choose Image</label>
+          <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,image/jpeg,image/png" hidden>
+          <button class="btn btn-text" id="clearUploadBtn" hidden>Clear</button>
+        </div>
+
+        <p class="stage-error" id="stageError" hidden></p>
+      </div>
+
+      <aside class="result-panel">
+        <h3>Result</h3>
+        <div class="result-count" id="resultCount">—</div>
+        <div class="result-status" id="resultStatus">
+          <span class="status-dot"></span>
+          <span id="resultStatusText">Waiting to start</span>
+        </div>
+        <dl class="result-meta">
+          <div>
+            <dt>Source</dt>
+            <dd id="resultSource">None selected</dd>
+          </div>
+          <div>
+            <dt>Model</dt>
+            <dd>Tiny Face Detector</dd>
+          </div>
+        </dl>
+      </aside>
+
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section id="about" class="view">
+    <div class="about-wrap">
+      <h2>About FaceDetect</h2>
+      <p>FaceDetect is a simple, browser-based tool for detecting human faces in a live camera feed or an uploaded photo. Every bit of processing happens locally on your device using <strong>face-api.js</strong>, a face detection library built on top of TensorFlow.js — nothing is uploaded to a server.</p>
+
+      <div class="about-grid">
+        <div>
+          <h3>How it works</h3>
+          <ol>
+            <li>The Tiny Face Detector model loads once when you open the Face Detection page.</li>
+            <li>Your camera frame or uploaded image is passed through the model.</li>
+            <li>Detected faces are drawn as boxes, and the total count is shown instantly.</li>
+          </ol>
+        </div>
+        <div>
+          <h3>Good to know</h3>
+          <ul>
+            <li>Camera access requires your permission and a secure (HTTPS or localhost) connection.</li>
+            <li>Supported uploads: JPG, JPEG, and PNG.</li>
+            <li>Detection accuracy depends on lighting, angle, and image quality.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>FaceDetect — AI Face Detection. Runs entirely in your browser.</p>
+</footer>
+
+<script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script defer src="script.js"></script>
+</body>
+</html>
